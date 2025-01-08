@@ -1,0 +1,42 @@
+---
+- name: Collect VM Provisioning Information
+  hosts: localhost
+  gather_facts: no
+  vars_prompt:
+    - name: vm_name
+      prompt: "Enter the VM name"
+      private: no
+    
+    - name: cpu_count
+      prompt: "Enter number of CPUs"
+      private: no
+      default: "4"
+    
+    - name: memory_size
+      prompt: "Enter memory size in MB"
+      private: no
+      default: "8192"
+    
+    - name: disk_size
+      prompt: "Enter disk size in GB"
+      private: no
+      default: "20"
+
+  tasks:
+    - name: Create directory with VM name
+      file:
+        path: "./{{ vm_name }}"
+        state: directory
+      
+    - name: Save VM configuration
+      copy:
+        content: |
+          vm_name: {{ vm_name }}
+          cpu_count: {{ cpu_count }}
+          memory_size: {{ memory_size }}
+          disk_size: {{ disk_size }}
+        dest: "./{{ vm_name }}/vm_config.yml"
+
+    - name: Display saved configuration
+      debug:
+        msg: "Configuration saved"
